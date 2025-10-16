@@ -129,16 +129,22 @@ function Contact(){
   async function handleSubmit(e){
     e.preventDefault();
     setStatus({ type: "loading", msg: "جاري الإرسال..." });
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const data = await res.json().catch(()=> ({}));
-      if(!res.ok) throw new Error(data?.error || "تعذر إرسال الرسالة");
+
+      // حاول قراءة الرد كـ JSON (قد يفشل إن لم يكن JSON)
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "تعذر إرسال الرسالة");
+
+      // نجاح
       setStatus({ type: "success", msg: "تم الإرسال بنجاح! بنرجع لك قريبًا 🙏" });
       setForm({ name: "", email: "", company: "", phone: "", message: "" });
+
     } catch (err){
       setStatus({ type: "error", msg: err.message || "صار خطأ غير متوقع" });
     }
@@ -150,7 +156,7 @@ function Contact(){
         <div>
           <h2 className="text-3xl font-black">تواصل معنا</h2>
           <p className="mt-4 text-white/80">للتعاونات والرعايات أو الانضمام لفريق صُنّاع المحتوى.</p>
-          {/* الروابط كما هي */}
+          {/* روابط النادي أو السوشيال مثل ما هي عندك */}
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white/5 border border-white/10 rounded-3xl p-6">
@@ -160,16 +166,19 @@ function Contact(){
               <input name="name" value={form.name} onChange={handleChange} required placeholder="اسمك الثلاثي"
                      className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500" />
             </label>
+
             <label className="block text-sm">
               <div className="mb-2 text-white/70">البريد</div>
               <input type="email" name="email" value={form.email} onChange={handleChange} required placeholder="you@email.com"
                      className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500" />
             </label>
+
             <label className="block text-sm">
               <div className="mb-2 text-white/70">الشركة</div>
               <input name="company" value={form.company} onChange={handleChange} placeholder="اسم الشركة/الجهة"
                      className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500" />
             </label>
+
             <label className="block text-sm">
               <div className="mb-2 text-white/70">رقم التواصل</div>
               <input name="phone" value={form.phone} onChange={handleChange} placeholder="05xxxxxxxx"

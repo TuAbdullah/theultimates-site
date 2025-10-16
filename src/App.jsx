@@ -88,22 +88,41 @@ function Creators(){
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {CREATORS.map((c) => (
             <div key={c.key} className="rounded-3xl border border-white/10 overflow-hidden bg-white/5">
-              <div className="relative aspect-[16/10] bg-zinc-900 flex items-center justify-center">
-                <img src={`/creators/${c.key}.jpg`} alt={c.name} className="w-full h-full object-cover" onError={(e)=>{if(!e.target.src.endsWith('.png')){e.target.src=`/creators/${c.key}.png`;}else{e.currentTarget.style.opacity=0.3;}}} />
-              </div>
-              <div className="p-5">
-                <div className="font-bold text-lg">{c.name}</div>
-                <div className="text-white/70 text-sm">{c.role}</div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {c.yt && <IconButton href={c.yt} label="YouTube"><YouTubeIcon/></IconButton>}
-                  {c.x && <IconButton href={c.x} label="X"><XIcon/></IconButton>}
-                  {c.tiktok && <IconButton href={c.tiktok} label="TikTok"><TikTokIcon/></IconButton>}
-                  {c.ig && <IconButton href={c.ig} label="Instagram"><InstagramIcon/></IconButton>}
-                  {c.sc && <IconButton href={c.sc} label="Snapchat"><SnapchatIcon/></IconButton>}
-                  {c.twitch && <IconButton href={c.twitch} label="Twitch"><TwitchIcon/></IconButton>}
-                </div>
-              </div>
-            </div>
+  {/* حاوية الصورة */}
+  <div className="relative aspect-square bg-zinc-900 overflow-hidden">
+    <img
+      src={`/creators/${c.key}.jpg`}
+      alt={c.name}
+      className="absolute inset-0 w-full h-full object-contain object-center"
+      onError={(e) => {
+        const t = e.currentTarget;
+        // لو الصورة JPG ما اشتغلت، جرّب PNG مرة واحدة فقط
+        if (!t.dataset.fallback) {
+          t.dataset.fallback = "1";
+          t.src = `/creators/${c.key}.png`;
+        } else {
+          // آخر حل: خليها باهتة عشان ما يخرب الشكل
+          t.style.opacity = 0.3;
+        }
+      }}
+    />
+  </div>
+
+  {/* النصوص والأيقونات أسفل الصورة */}
+  <div className="p-5">
+    <div className="font-bold text-lg">{c.name}</div>
+    <div className="text-white/70 text-sm">{c.role}</div>
+    <div className="mt-3 flex flex-wrap gap-2">
+      {c.yt && <IconButton href={c.yt} label="YouTube"><YouTubeIcon/></IconButton>}
+      {c.x && <IconButton href={c.x} label="X"><XIcon/></IconButton>}
+      {c.tiktok && <IconButton href={c.tiktok} label="TikTok"><TikTokIcon/></IconButton>}
+      {c.ig && <IconButton href={c.ig} label="Instagram"><InstagramIcon/></IconButton>}
+      {c.sc && <IconButton href={c.sc} label="Snapchat"><SnapchatIcon/></IconButton>}
+      {c.twitch && <IconButton href={c.twitch} label="Twitch"><TwitchIcon/></IconButton>}
+    </div>
+  </div>
+</div>
+
           ))}
         </div>
       </div>
@@ -174,8 +193,8 @@ function Contact(){
             </label>
 
             <label className="block text-sm">
-              <div className="mb-2 text-white/70">الشركة</div>
-              <input name="company" value={form.company} onChange={handleChange} placeholder="اسم الشركة/الجهة"
+              <div className="mb-2 text-white/70">الموضوع</div>
+              <input name="company" value={form.company} onChange={handleChange} placeholder="الموضوع"
                      className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500" />
             </label>
 

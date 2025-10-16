@@ -209,3 +209,40 @@ function Contact(){
   );
 }
 
+function Footer(){
+  return (
+    <footer className="border-t border-white/10">
+      <div className="max-w-7xl mx-auto px-4 py-10 grid sm:grid-cols-3 gap-8 text-sm">
+        <div>
+          <div className="flex items-center gap-2">
+            <img src={LogoFlat} alt="TU" className="w-7 h-7 rounded" />
+            <span className="font-bold">The Ultimates</span>
+          </div>
+          <p className="mt-3 text-white/70">
+            © {new Date().getFullYear()} The Ultimates. جميع الحقوق محفوظة.
+          </p>
+        </div>
+
+        <div>
+          <div className="font-semibold">روابط النادي</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <IconButton href="https://www.youtube.com/@TheUltimatesgg" label="YouTube"><YouTubeIcon/></IconButton>
+            <IconButton href="https://twitter.com/TheUltimatesgg" label="X"><XIcon/></IconButton>
+            <IconButton href="https://www.instagram.com/TheUltimatesgg" label="Instagram"><InstagramIcon/></IconButton>
+            <IconButton href="https://www.tiktok.com/@theultimatesgg" label="TikTok"><TikTokIcon/></IconButton>
+            <IconButton href="https://twitch.tv/TheUltimatesgg" label="Twitch"><TwitchIcon/></IconButton>
+          </div>
+        </div>
+
+        <div>
+          <div className="font-semibold">روابط سريعة</div>
+          <ul className="mt-3 space-y-2 text-white/70">
+            <li><a href="#about" className="hover:text-red-400">عن النادي</a></li>
+            <li><a href="#creators" className="hover:text-red-400">صنّاع المحتوى</a></li>
+            <li><a href="#contact" className="hover:text-red-400">تواصل معنا</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  );
+}

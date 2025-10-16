@@ -81,85 +81,140 @@ const CREATORS = [
 ];
 
 function Creators(){
-  return (
-    <section id="creators" className="border-t border-white/10 bg-gradient-to-b from-black to-zinc-950">
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-black">صُنّاع المحتوى</h2>
-        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {CREATORS.map((c) => (
-            <div key={c.key} className="rounded-3xl border border-white/10 overflow-hidden bg-white/5">
-              <div className="relative aspect-[16/10] bg-zinc-900 flex items-center justify-center">
-                <img src={`/creators/${c.key}.jpg`} alt={c.name} className="w-full h-full object-cover" onError={(e)=>{if(!e.target.src.endsWith('.png')){e.target.src=`/creators/${c.key}.png`;}else{e.currentTarget.style.opacity=0.3;}}} />
-              </div>
-              <div className="p-5">
-                <div className="font-bold text-lg">{c.name}</div>
-                <div className="text-white/70 text-sm">{c.role}</div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {c.yt && <IconButton href={c.yt} label="YouTube"><YouTubeIcon/></IconButton>}
-                  {c.x && <IconButton href={c.x} label="X"><XIcon/></IconButton>}
-                  {c.tiktok && <IconButton href={c.tiktok} label="TikTok"><TikTokIcon/></IconButton>}
-                  {c.ig && <IconButton href={c.ig} label="Instagram"><InstagramIcon/></IconButton>}
-                  {c.sc && <IconButton href={c.sc} label="Snapchat"><SnapchatIcon/></IconButton>}
-                  {c.twitch && <IconButton href={c.twitch} label="Twitch"><TwitchIcon/></IconButton>}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+  const [form, setForm] = React.useState({
+    name: "",
+    email: "",
+    company: "",
+    phone: "",
+    message: "",
+  });
+  const [status, setStatus] = React.useState({ type: "idle", msg: "" }); // idle | loading | success | error
 
-function Contact(){
+  function handleChange(e){
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  async function handleSubmit(e){
+    e.preventDefault();
+    setStatus({ type: "loading", msg: "جاري الإرسال..." });
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if(!res.ok){
+        const err = await res.json().catch(()=> ({}));
+        throw new Error(err?.error || "تعذر إرسال الرسالة");
+      }
+
+      setStatus({ type: "success", msg: "تم إرسال الرسالة بنجاح! بنرجع لك قريبًا 🙏" });
+      setForm({ name: "", email: "", company: "", phone: "", message: "" });
+    } catch (err){
+      setStatus({ type: "error", msg: err.message || "صار خطأ غير متوقع" });
+    }
+  }
+
   return (
     <section id="contact" className="border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-10">
         <div>
           <h2 className="text-3xl font-black">تواصل معنا</h2>
-          <p className="mt-4 text-white/80">للتعاونات والرعايات أو الانضمام لفريق صُنّاع المحتوى.</p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            <IconButton href="https://www.youtube.com/@TheUltimatesgg" label="YouTube"><YouTubeIcon/></IconButton>
-            <IconButton href="https://twitter.com/TheUltimatesgg" label="X"><XIcon/></IconButton>
-            <IconButton href="https://www.instagram.com/TheUltimatesgg" label="Instagram"><InstagramIcon/></IconButton>
-            <IconButton href="https://www.tiktok.com/@theultimatesgg" label="TikTok"><TikTokIcon/></IconButton>
-            <IconButton href="https://twitch.tv/TheUltimatesgg" label="Twitch"><TwitchIcon/></IconButton>
-          </div>
-          <ul className="mt-6 space-y-3 text-white/80">
-            <li>البريد: <a className="hover:text-red-400" href="mailto:contact@theultimates.gg">contact@theultimates.gg</a></li>
-            <li>المتجر: <a className="hover:text-red-400" href="https://store-tu.com/" target="_blank" rel="noopener">store-tu.com</a></li>
-          </ul>
+          <p className="mt-4 text-white/80">
+            للتعاونات والرعايات أو الانضمام لفريق صُنّاع المحتوى.
+          </p>
+          {/* خلي روابط السوشيال مثل ما هي عندك */}
         </div>
-        <form onSubmit={(e)=>e.preventDefault()} className="bg-white/5 border border-white/10 rounded-3xl p-6">
+
+        <form onSubmit={handleSubmit} className="bg-white/5 border border-white/10 rounded-3xl p-6">
           <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="الاسم" placeholder="اسمك الثلاثي" />
-            <Field label="البريد" type="email" placeholder="you@email.com" />
-            <Field label="الشركة" placeholder="اسم الشركة/الجهة" />
-            <Field label="رقم التواصل" placeholder="05xxxxxxxx" />
+            <label className="block text-sm">
+              <div className="mb-2 text-white/70">الاسم</div>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                required
+                placeholder="اسمك الثلاثي"
+                className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500"
+              />
+            </label>
+
+            <label className="block text-sm">
+              <div className="mb-2 text-white/70">البريد</div>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                placeholder="you@email.com"
+                className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500"
+              />
+            </label>
+
+            <label className="block text-sm">
+              <div className="mb-2 text-white/70">الشركة</div>
+              <input
+                name="company"
+                value={form.company}
+                onChange={handleChange}
+                placeholder="اسم الشركة/الجهة"
+                className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500"
+              />
+            </label>
+
+            <label className="block text-sm">
+              <div className="mb-2 text-white/70">رقم التواصل</div>
+              <input
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="05xxxxxxxx"
+                className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500"
+              />
+            </label>
           </div>
+
           <div className="mt-4">
-            <Field label="الرسالة" textarea placeholder="اكتب لنا تفاصيل التعاون المطلوب..." />
+            <label className="block text-sm">
+              <div className="mb-2 text-white/70">الرسالة</div>
+              <textarea
+                name="message"
+                value={form.message}
+                onChange={handleChange}
+                required
+                placeholder="اكتب لنا تفاصيل التعاون المطلوب..."
+                className="w-full h-32 rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500"
+              />
+            </label>
           </div>
-          <button className="w-full mt-5 py-3 rounded-2xl bg-red-600 hover:bg-red-500 font-semibold">إرسال</button>
-          <p className="text-xs text-white/50 mt-3">* هذا النموذج تجريبي — سنربطه ببريدك لاحقاً.</p>
+
+          <button
+            disabled={status.type === "loading"}
+            className="w-full mt-5 py-3 rounded-2xl bg-red-600 hover:bg-red-500 font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {status.type === "loading" ? "جاري الإرسال..." : "إرسال"}
+          </button>
+
+          {status.type === "success" && (
+            <p className="text-green-400 mt-3 text-sm">{status.msg}</p>
+          )}
+          {status.type === "error" && (
+            <p className="text-red-400 mt-3 text-sm">{status.msg}</p>
+          )}
+
+          <p className="text-xs text-white/50 mt-3">
+            * هذا النموذج يرسل لبريدك عبر Nodemailer.
+          </p>
         </form>
       </div>
     </section>
   );
 }
 
-function Field({ label, textarea, ...props }){
-  return (
-    <label className="block text-sm">
-      <div className="mb-2 text-white/70">{label}</div>
-      {textarea ? (
-        <textarea className="w-full h-32 rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500" {...props} />
-      ) : (
-        <input className="w-full rounded-xl bg-black/60 border border-white/10 px-3 py-2 outline-none focus:border-red-500" {...props} />
-      )}
-    </label>
-  );
-}
 
 function Footer(){
   return (

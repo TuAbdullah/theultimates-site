@@ -21,20 +21,41 @@ function Header(){
   return (
     <header className="sticky top-0 z-50 backdrop-blur bg-black/80 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* الشعار */}
         <a href="#home" className="flex items-center gap-3">
           <img src={LogoFlat} className="w-9 h-9 rounded" alt="TU"/>
           <span className="font-bold">The Ultimates</span>
         </a>
+
+        {/* زر المتجر للجوال فقط */}
+        <a
+          href="https://store-tu.com/"
+          target="_blank"
+          rel="noopener"
+          className="md:hidden px-3 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-sm"
+        >
+          المتجر
+        </a>
+
+        {/* روابط الديسكتوب */}
         <nav className="hidden md:flex items-center gap-6 text-sm">
           <a href="#about" className="hover:text-red-400">عن النادي</a>
           <a href="#creators" className="hover:text-red-400">صُنّاع المحتوى</a>
           <a href="#contact" className="hover:text-red-400">تواصل</a>
-          <a href="https://store-tu.com/" target="_blank" rel="noopener" className="px-4 py-2 rounded-2xl bg-red-600 hover:bg-red-500">المتجر</a>
+          <a
+            href="https://store-tu.com/"
+            target="_blank"
+            rel="noopener"
+            className="px-4 py-2 rounded-2xl bg-red-600 hover:bg-red-500"
+          >
+            المتجر
+          </a>
         </nav>
       </div>
     </header>
   );
 }
+
 
 function Hero(){
   return (
